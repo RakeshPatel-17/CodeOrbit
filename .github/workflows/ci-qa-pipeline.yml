@@ -1,0 +1,30 @@
+name: 'CI / QA Environment Validation'
+
+on:
+  pull_request:
+    branches:
+      - qa
+
+jobs:
+  compliance-and-testing:
+    name: 'Static Analysis & Regression Testing'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout Source Code'
+        uses: actions/checkout@v4
+
+      - name: 'Initialize Node.js Runtime Environment'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 'Install Enterprise Dependencies'
+        run: npm ci
+
+      - name: 'Execute Linter (Static Code Analysis)'
+        run: npm run lint --if-present
+
+      - name: 'Execute Test Suite (Automated QA Regression)'
+        run: npm run test -- --watch=false --browsers=ChromeHeadless --if-present
