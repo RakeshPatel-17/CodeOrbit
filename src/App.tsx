@@ -54,7 +54,7 @@ function DashboardLayout() {
 
       {/* Master Workspace Content Arena */}
       <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto" }}>
-        <header style={{ height: "60px", background: "#ffffff", borderBottom: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyBetween: "space-between", padding: "0 2rem" }}>
+        <header style={{ height: "60px", background: "#ffffff", borderBottom: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2rem" }}>
           <h2 style={{ fontSize: "1.25rem", fontWeight: 600 }}>System Control Center</h2>
         </header>
         <div style={{ padding: "2rem", maxWidth: "1200px", width: "100%", margin: "0 auto" }}>

@@ -14,17 +14,16 @@ jobs:
       - name: 'Checkout Source Code'
         uses: actions/checkout@v4
 
-      - name: 'Initialize Node.js Runtime Environment'
-        uses: actions/setup-node@v4
+      - name: 'Initialize Bun Runtime Environment'
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: '20'
-          cache: 'npm'
+          bun-version: 'latest'
 
       - name: 'Install Enterprise Dependencies'
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: 'Execute Linter (Static Code Analysis)'
-        run: npm run lint --if-present
+        run: bun run lint --if-present
 
       - name: 'Execute Test Suite (Automated QA Regression)'
-        run: npm run test -- --watch=false --browsers=ChromeHeadless --if-present
+        run: bun test --if-present
