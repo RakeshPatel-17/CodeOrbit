@@ -1,5 +1,6 @@
 import React from "react";
 import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
+import { AnalysisDashboard } from "./components/AnalysisDashboard";
 
 export default function App() {
   return (
@@ -63,6 +64,13 @@ function DashboardLayout() {
             <Card title="Database Status" value="Connected" status="Synchronized (Dev Branch)" statusColor="#16a34a" />
             <Card title="Tenant Routing" value="Isolated Pipeline" status="Active" statusColor="#16a34a" />
           </div>
+
+          {/* Dynamic Data Analysis Dashboard */}
+          <div style={{ marginBottom: "2rem" }}>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1rem", letterSpacing: "-0.02em" }}>Workspace Analysis & Logistics</h3>
+            <AnalysisDashboard />
+          </div>
+
           <div style={{ background: "#ffffff", padding: "1.5rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
             <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "1rem" }}>Workspace Architecture Overview</h3>
             <p style={{ color: "#475569", fontSize: "0.875rem", lineHeight: "1.5" }}>
