@@ -41,3 +41,19 @@ describe("Clerk Webhooks Gate", () => {
     expect(json.error).toBe("Invalid signature");
   });
 });
+
+describe("File Uploads Gate", () => {
+  it("should reject upload request if no file is provided", async () => {
+    const response = await app.handle(
+      new Request("http://localhost/api/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}), // Empty body
+      })
+    );
+
+    expect(response.status).toBe(422); // Unprocessable Entity due to missing t.File() body
+  });
+});
