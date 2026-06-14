@@ -1,9 +1,25 @@
 import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
+import { swagger } from "@elysiajs/swagger";
+import { rateLimit } from "elysia-rate-limit";
 import { sendEmail } from "./utils/email";
 
 const app = new Elysia({ prefix: "/api" })
   .use(cors()) // Enables CORS for local React development on port 3000
+  .use(rateLimit({
+    max: 100, // Limit each IP to 100 requests per minute
+    duration: 60000,
+  }))
+  .use(swagger({
+    path: "/docs", // Swagger UI available at /api/docs
+    documentation: {
+      info: {
+        title: "CodeOrbit API Console",
+        version: "1.0.0",
+        description: "Interactive API documentation for CodeOrbit's ElysiaJS serverless backend."
+      }
+    }
+  }))
   .get("/hello", () => ({
     status: "success",
     message: "Hello from ElysiaJS backend on CodeOrbit!",
