@@ -72,3 +72,53 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+
+  database-backup-and-migration-prod:
+    name: 'Production Database Backup & Migration'
+    needs: [validate-and-unit-test, e2e-browser-testing]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout Source Code'
+        uses: actions/checkout@v4
+
+      - name: 'Initialize Bun Runtime'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 'latest'
+
+      - name: 'Install Dependencies'
+        run: bun install --frozen-lockfile
+
+      - name: 'Install PostgreSQL Client Utility'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: 'Create Point-in-Time Database Backup'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          # Create a unique timestamped file name
+          BACKUP_NAME="prod-db-backup-$(date +'%Y-%m-%d-%H%M%S').sql"
+          echo "BACKUP_FILE=$BACKUP_NAME" >> $GITHUB_ENV
+          
+          # Execute pg_dump directly using the connection URI
+          pg_dump "$DATABASE_URL" -f "$BACKUP_NAME"
+          echo "✅ Database backup created: $BACKUP_NAME"
+
+      - name: 'Archive Database Backup on GitHub'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.BACKUP_FILE }}
+          path: ${{ env.BACKUP_FILE }}
+          retention-days: 14 # Retain for 2 weeks for rollback safety
+
+      - name: 'Run Database Schema Migrations'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "🚀 Applying new migrations to production database..."
+          bun run db:migrate
+          echo "✅ Database migrations successfully applied!"
