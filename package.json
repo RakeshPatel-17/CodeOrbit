@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.3",
+    "@elysiajs/cors": "^1.4.2",
+    "elysia": "^1.4.28",
     "react": "^19",
     "react-dom": "^19"
   },

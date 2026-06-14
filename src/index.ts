@@ -1,9 +1,15 @@
 import { serve } from "bun";
 import index from "./index.html";
+import app from "../api/index";
 
-// Fall back to 3001 if port 3000 is locked by another instance
 const PORT = process.env.PORT || 3000;
+const API_PORT = 3001;
 
+// Start ElysiaJS Backend locally on port 3001
+const apiServer = app.listen(API_PORT);
+console.log(`🚀 ElysiaJS Backend running at http://localhost:${apiServer.port}/api`);
+
+// Start React Frontend locally on port 3000
 const server = serve({
   port: PORT,
   routes: {
@@ -12,4 +18,4 @@ const server = serve({
   development: true,
 });
 
-console.log(`?? System Server running at http://localhost:${server.port}/`);
+console.log(`💻 React Frontend running at http://localhost:${server.port}/`);

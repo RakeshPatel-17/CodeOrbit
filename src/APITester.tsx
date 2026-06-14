@@ -10,7 +10,10 @@ export function APITester() {
       const form = e.currentTarget;
       const formData = new FormData(form);
       const endpoint = formData.get("endpoint") as string;
-      const url = new URL(endpoint, location.href);
+      const apiBase = location.hostname === "localhost" || location.hostname === "127.0.0.1"
+        ? "http://localhost:3001"
+        : location.origin;
+      const url = new URL(endpoint, apiBase);
       const method = formData.get("method") as string;
       const res = await fetch(url, { method });
 
