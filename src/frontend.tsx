@@ -1,8 +1,39 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { ClerkProvider } from "@clerk/clerk-react";
+import * as Sentry from "@sentry/react";
+import posthog from "posthog-js";
 import App from "./App";
 import "./index.css";
+
+// 📊 Initialize PostHog (Product Analytics)
+if (typeof window !== "undefined") {
+  const posthogKey = import.meta.env.VITE_POSTHOG_KEY || (typeof process !== "undefined" && process.env ? process.env.VITE_POSTHOG_KEY : undefined);
+  const posthogHost = import.meta.env.VITE_POSTHOG_HOST || (typeof process !== "undefined" && process.env ? process.env.VITE_POSTHOG_HOST : undefined) || "https://us.i.posthog.com";
+  
+  if (posthogKey) {
+    posthog.init(posthogKey, {
+      api_host: posthogHost,
+      person_profiles: "identified_only",
+      capture_pageview: true,
+    });
+  }
+}
+
+// 🛡️ Initialize Sentry (Error & Crash Reporting)
+const sentryDsn = import.meta.env.VITE_SENTRY_DSN || (typeof process !== "undefined" && process.env ? process.env.VITE_SENTRY_DSN : undefined);
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+    ],
+    tracesSampleRate: 1.0,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
+  });
+}
 
 // Safe cross-runtime environment extraction with hardcoded local fallback
 const getPublishableKey = () => {
