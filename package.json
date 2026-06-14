@@ -9,7 +9,9 @@
     "start": "NODE_ENV=production bun src/index.ts",
     "db:generate": "bunx drizzle-kit generate",
     "db:migrate": "bunx drizzle-kit migrate",
-    "db:studio": "bunx drizzle-kit studio"
+    "db:studio": "bunx drizzle-kit studio",
+    "test": "bun test tests/unit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.3",
@@ -28,6 +30,7 @@
     "resend": "^6.12.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",
