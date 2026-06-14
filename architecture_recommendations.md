@@ -75,4 +75,41 @@ ElysiaJS has a built-in Swagger plugin (`@elysiajs/swagger`) which auto-generate
 | Service | Category | Free Tier Limit | Best For |
 | :--- | :--- | :--- | :--- |
 | **Resend** | Transactional Email | 3,000 emails/month (100/day) | Sending sign-up confirmations, system alerts, or tenant workspace invites using React Email templates. |
+
+---
+
+## 🤖 8. Hugging Face AI Workflows ($0 Cost)
+
+You can run state-of-the-art AI models directly in CodeOrbit for **$0 cost** using Hugging Face's **Serverless Inference API**.
+
+### How it Works:
+*   **Inference API**: Hugging Face hosts thousands of models (like Mistral, Llama, Stable Diffusion, and Whisper) and lets you query them for free via simple HTTP `POST` requests.
+*   **Usage Limits**: Free rate-limits are based on model load and key usage (perfect for development and low-traffic production). No credit card required.
+*   **Authentication**: Requires a free Hugging Face **User Access Token** (starts with `hf_...`).
+
+### Recommended Models for CodeOrbit:
+1.  **Text Generation / Chat (LLM)**: `mistralai/Mistral-7B-Instruct-v0.3` or `meta-llama/Llama-3-8B-Instruct` (Generate workspace content, summarize notes, draft team announcements).
+2.  **Image Generation**: `black-forest-labs/FLUX.1-schnell` or `stabilityai/stable-diffusion-3-medium` (Generate logos, banners, or workspace icons).
+3.  **Speech-to-Text (Transcription)**: `openai/whisper-large-v3` (Transcribe uploaded audio/voice notes inside channels).
+4.  **Embeddings (Semantic Search)**: `BAAI/bge-large-en-v1.5` (Power semantic search across tenant documents).
+
+---
+
+## 🛠️ Combined Stack Architecture Workflow
+
+```mermaid
+graph TD
+    User([Browser Client]) -->|1. Client Actions| React[React Frontend on Vercel]
+    React -->|2. Web Vitals / Errors| VercelAnalytics[Vercel Analytics & Speed Insights]
+    React -->|3. Session Replays| PostHog[PostHog Analytics]
+    React -->|4. Authenticated Request| Elysia[ElysiaJS Backend Vercel Serverless]
+    Clerk[Clerk Auth Service] -->|Provides Token| React
+    Elysia -->|5. Verify Token| Clerk
+    Elysia -->|6. Query Data| Neon[(Neon Serverless Postgres)]
+    Elysia -->|7. Query Cache| Upstash[Upstash Redis]
+    Elysia -->|8. Schedule Job| QStash[Upstash QStash]
+    Elysia -->|9. Send Logs| Axiom[Axiom Log Ingestion]
+    Elysia -->|10. Transactional Mail| Resend[Resend API]
+    Elysia -->|11. AI Inference| HuggingFace[Hugging Face Serverless API]
+    React -->|12. File Uploads| UploadThing[UploadThing CDN]
 ```
