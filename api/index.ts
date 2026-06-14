@@ -3,9 +3,11 @@ import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
 import { rateLimit } from "elysia-rate-limit";
 import { sendEmail } from "./utils/email";
+import { webhookController } from "./controllers/webhookController";
 
 const app = new Elysia({ prefix: "/api" })
   .use(cors()) // Enables CORS for local React development on port 3000
+  .use(webhookController) // Register webhook routes
   .use(rateLimit({
     max: 100, // Limit each IP to 100 requests per minute
     duration: 60000,
