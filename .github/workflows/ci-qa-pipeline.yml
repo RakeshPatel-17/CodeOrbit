@@ -1,13 +1,18 @@
-name: 'CI / QA Environment Validation'
+name: 'CI / QA Pipeline'
 
 on:
+  push:
+    branches:
+      - main
+      - qa
   pull_request:
     branches:
+      - main
       - qa
 
 jobs:
-  compliance-and-testing:
-    name: 'Static Analysis & Regression Testing'
+  validate-and-unit-test:
+    name: 'Type Check, Build, and Unit Test'
     runs-on: ubuntu-latest
 
     steps:
@@ -19,11 +24,48 @@ jobs:
         with:
           bun-version: 'latest'
 
-      - name: 'Install Enterprise Dependencies'
+      - name: 'Install Dependencies'
         run: bun install --frozen-lockfile
 
-      - name: 'Execute Linter (Static Code Analysis)'
+      - name: 'Static Type Analysis (TypeScript)'
+        run: bunx tsc --noEmit
+
+      - name: 'Execute Linter'
         run: bun run lint --if-present
 
-      - name: 'Execute Test Suite (Automated QA Regression)'
-        run: bun test --if-present
+      - name: 'Verify Production Build Compilation'
+        run: bun run build
+
+      - name: 'Execute Unit Tests'
+        run: bun run test
+
+  e2e-browser-testing:
+    name: 'Playwright E2E Browser Testing'
+    needs: validate-and-unit-test # Only run E2E if basic validation passes to save CI minutes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout Source Code'
+        uses: actions/checkout@v4
+
+      - name: 'Initialize Bun Runtime'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 'latest'
+
+      - name: 'Install Dependencies'
+        run: bun install --frozen-lockfile
+
+      - name: 'Install Playwright Browsers & OS Dependencies'
+        run: bunx playwright install --with-deps
+
+      - name: 'Execute Playwright E2E Tests'
+        run: bun run test:e2e
+
+      - name: 'Archive Playwright Test Report (On Failure)'
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
