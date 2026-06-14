@@ -24,12 +24,12 @@ const getPublishableKey = () => {
   }
   
   // Local development hardcoded fallback asset
-  return "pk_test_your_actual_clerk_key_here";
+  return "pk_test_ZWFnZXIta29kaWFrLTY0LmNsZXJrLmFjY291bnRzLmRldiQ";
 };
 
 const PUBLISHABLE_KEY = getPublishableKey();
 
-if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_your_actual_clerk_key_here") {
+if (!PUBLISHABLE_KEY) {
   throw new Error("Missing valid Clerk Publishable Key string in frontend entry point. Please set BUN_PUBLIC_CLERK_PUBLISHABLE_KEY or VITE_CLERK_PUBLISHABLE_KEY in your environment.");
 }
 
