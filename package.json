@@ -38,11 +38,16 @@
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.10",
     "husky": "^9.1.7",
-    "lint-staged": "^17.0.7"
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.4"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "tsc --noEmit"
+      "tsc --noEmit",
+      "prettier --write"
+    ],
+    "*.{json,md,css,html}": [
+      "prettier --write"
     ]
   }
 }
