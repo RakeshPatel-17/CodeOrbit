@@ -8,13 +8,13 @@ test.describe("CodeOrbit App Initial Load", () => {
     // Verify browser tab title matches
     await expect(page).toHaveTitle(/Bun \+ React/);
 
-    // Verify the Clerk Auth Gate renders the header
+        // Verify the Clerk Auth Gate renders the header
     const header = page.locator("h1");
-    await expect(header).toHaveText("CodeOrbit Hub");
+    await expect(header).toHaveText("CodeOrbit Console");
 
     // Verify the descriptive helper text
-    const description = page.locator("p");
-    await expect(description).toHaveText("Please sign in to access your multi-tenant environment workspace.");
+    const description = page.locator(".auth-right p");
+    await expect(description).toHaveText("Access your secure, isolated multi-tenant developer workspace.");
 
     // Verify the Sign In action button is present and visible
     const signInBtn = page.locator("button", { hasText: "Sign In to Workspace" });
