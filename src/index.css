@@ -185,3 +185,49 @@ code {
     animation: none !important;
   }
 }
+
+/* Auth Layout styles */
+.auth-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #090d16 0%, #111029 100%);
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.auth-wrapper {
+  display: flex;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.auth-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 4rem;
+  text-align: left;
+}
+
+.auth-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .auth-left {
+    display: none;
+  }
+  .auth-wrapper {
+    justify-content: center;
+  }
+}

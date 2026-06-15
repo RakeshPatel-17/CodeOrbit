@@ -63,7 +63,14 @@ export async function verifySvixWebhookSignature(
 
   try {
     // Decode the base64 secret (remove 'whsec_' prefix if present)
-    const secretKey = secret.startsWith("whsec_") ? secret.split("_")[1] : secret;
+    let secretKey = secret;
+    if (secret.startsWith("whsec_")) {
+      const parts = secret.split("_");
+      const secondPart = parts[1];
+      if (secondPart !== undefined) {
+        secretKey = secondPart;
+      }
+    }
     const secretBuffer = Buffer.from(secretKey, "base64");
 
     // Format content to sign
@@ -78,8 +85,10 @@ export async function verifySvixWebhookSignature(
     // svix-signature header is in format: v1,sig1 v1,sig2
     const signatures = svixSignature.split(" ");
     for (const sig of signatures) {
-      const [version, signatureValue] = sig.split(",");
-      if (version === "v1") {
+      const parts = sig.split(",");
+      const version = parts[0];
+      const signatureValue = parts[1];
+      if (version === "v1" && signatureValue !== undefined) {
         if (safeCompare(expectedSignature, signatureValue)) {
           return true;
         }

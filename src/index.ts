@@ -6,8 +6,8 @@ const PORT = process.env.PORT || 3000;
 const API_PORT = 3001;
 
 // Start ElysiaJS Backend locally on port 3001
-const apiServer = app.listen(API_PORT);
-console.log(`🚀 ElysiaJS Backend running at http://localhost:${apiServer.port}/api`);
+app.listen(API_PORT);
+console.log(`🚀 ElysiaJS Backend running at http://localhost:${API_PORT}/api`);
 
 // Start React Frontend locally on port 3000
 const server = serve({
