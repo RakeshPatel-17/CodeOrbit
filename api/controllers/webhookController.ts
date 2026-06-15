@@ -3,6 +3,7 @@ import { verifySvixWebhookSignature } from "../utils/webhooks";
 import { db } from "../db/db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { sendEmail } from "../utils/email";
 
 export const webhookController = new Elysia({ prefix: "/webhooks" })
   // onParse to capture the raw body string for Svix webhook signature verification
@@ -76,6 +77,29 @@ export const webhookController = new Elysia({ prefix: "/webhooks" })
           });
 
         console.log(`✅ Successfully synced Clerk user: ${clerkId}`);
+
+        // Send a welcome email if this is a newly registered user
+        if (type === "user.created") {
+          try {
+            await sendEmail({
+              to: email,
+              subject: "Welcome to CodeOrbit!",
+              html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                  <h1 style="color: #2563eb; font-size: 24px; margin-bottom: 16px;">Welcome to CodeOrbit, ${name || "Developer"}!</h1>
+                  <p style="color: #475569; font-size: 16px; line-height: 1.5;">Your developer account has been successfully synchronized and isolated in our multi-tenant PostgreSQL database.</p>
+                  <p style="color: #475569; font-size: 16px; line-height: 1.5;">You can now log in to access your secure console, configure cache policies, and query isolated developer pipelines.</p>
+                  <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+                  <p style="color: #64748b; font-size: 12px;">This is an automated welcome notification sent from your serverless ElysiaJS integration.</p>
+                </div>
+              `
+            });
+            console.log(`✉️ Welcome email sent successfully to: ${email}`);
+          } catch (emailError) {
+            console.error("⚠️ Failed to send welcome email:", emailError);
+          }
+        }
+
         return { success: true, message: `User synced successfully` };
       }
 
