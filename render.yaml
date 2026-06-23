@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: orbit-property-api
+    env: docker
+    dockerfilePath: ./dotnet-api/Dockerfile
+    dockerContext: ./dotnet-api
+    envVars:
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: Clerk__Authority
+        sync: false
+      - key: Clerk__ValidIssuer
+        sync: false
+      - key: CloudflareR2__AccessKey
+        sync: false
+      - key: CloudflareR2__SecretKey
+        sync: false
+      - key: CloudflareR2__ServiceURL
+        sync: false
+      - key: CloudflareR2__BucketName
+        sync: false

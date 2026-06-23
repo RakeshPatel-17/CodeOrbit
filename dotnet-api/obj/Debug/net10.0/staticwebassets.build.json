@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "eD0eB7PFC24nx7iRcTZ9PZaKh/QCN4l8j6e3k3ZLjsY=",
+  "Source": "NetApi",
+  "BasePath": "/",
+  "Mode": "Root",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

@@ -1,21 +1,21 @@
 import React from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
 
-const activityData = [
-  { name: "Mon", users: 400, requests: 2400 },
-  { name: "Tue", users: 300, requests: 1398 },
-  { name: "Wed", users: 200, requests: 9800 },
-  { name: "Thu", users: 278, requests: 3908 },
-  { name: "Fri", users: 189, requests: 4800 },
-  { name: "Sat", users: 239, requests: 3800 },
-  { name: "Sun", users: 349, requests: 4300 },
+const occupancyData = [
+  { name: "Mon", entry: 840, exit: 810 },
+  { name: "Tue", entry: 920, exit: 890 },
+  { name: "Wed", entry: 870, exit: 865 },
+  { name: "Thu", entry: 1100, exit: 1050 },
+  { name: "Fri", entry: 1250, exit: 1300 },
+  { name: "Sat", entry: 950, exit: 980 },
+  { name: "Sun", entry: 720, exit: 750 },
 ];
 
-const databaseData = [
-  { name: "Workspace A", storageMB: 120, queries: 4000 },
-  { name: "Workspace B", storageMB: 240, queries: 3000 },
-  { name: "Workspace C", storageMB: 80, queries: 2000 },
-  { name: "Workspace D", storageMB: 310, queries: 2780 },
+const maintenanceData = [
+  { name: "The Grand", open: 12, resolved: 45 },
+  { name: "Vista Towers", open: 8, resolved: 32 },
+  { name: "Parkside", open: 15, resolved: 60 },
+  { name: "Oasis Lofts", open: 3, resolved: 21 },
 ];
 
 export function AnalysisDashboard() {
@@ -23,49 +23,55 @@ export function AnalysisDashboard() {
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", width: "100%" }}>
       {/* Metric Cards Row */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem" }}>
-        <MetricCard title="Total Cache Invocations" value="12,482" subtitle="Upstash Redis Cache" trend="+12.4% vs last week" trendColor="#16a34a" />
-        <MetricCard title="Cache Hit Rate" value="94.2%" subtitle="Redis Serverless" trend="High Efficiency" trendColor="#16a34a" />
-        <MetricCard title="Elysia API Latency" value="14ms" subtitle="Serverless Function Edge" trend="Optimal" trendColor="#16a34a" />
-        <MetricCard title="Neon Active Connections" value="8" subtitle="Pooler Active" trend="Healthy" trendColor="#16a34a" />
+        <MetricCard title="Average Stay Time" value="14.2 hrs" subtitle="Based on Gate Logs" trend="+2.4% vs last week" trendColor="#16a34a" />
+        <MetricCard title="Maintenance Resolution" value="94.2%" subtitle="SLA Compliance" trend="High Efficiency" trendColor="#16a34a" />
+        <MetricCard title="Resident Satisfaction" value="4.8/5" subtitle="Recent Surveys" trend="Optimal" trendColor="#16a34a" />
+        <MetricCard title="Vacant Units" value="26" subtitle="Across Portfolio" trend="-2 this week" trendColor="#16a34a" />
       </div>
 
       {/* Charts Row */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "1.5rem" }}>
-        {/* Workspace Traffic (Area Chart) */}
+        {/* Occupancy Traffic (Area Chart) */}
         <div style={{ background: "#ffffff", padding: "1.5rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-          <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "1.5rem", color: "#0f172a" }}>Workspace Traffic & Activity</h3>
+          <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "1.5rem", color: "#0f172a" }}>Weekly Gate Access Traffic</h3>
           <div style={{ width: "100%", height: 300 }}>
             <ResponsiveContainer>
-              <AreaChart data={activityData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <AreaChart data={occupancyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="colorRequests" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="colorEntry" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorExit" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                 <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} />
                 <YAxis stroke="#64748b" fontSize={12} tickLine={false} />
                 <Tooltip />
-                <Area type="monotone" dataKey="requests" stroke="#3b82f6" fillOpacity={1} fill="url(#colorRequests)" />
+                <Legend />
+                <Area type="monotone" dataKey="entry" name="Gate Entries" stroke="#3b82f6" fillOpacity={1} fill="url(#colorEntry)" />
+                <Area type="monotone" dataKey="exit" name="Gate Exits" stroke="#10b981" fillOpacity={1} fill="url(#colorExit)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Database Metrics (Bar Chart) */}
+        {/* Maintenance Metrics (Bar Chart) */}
         <div style={{ background: "#ffffff", padding: "1.5rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-          <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "1.5rem", color: "#0f172a" }}>Tenant Database Allocations</h3>
+          <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "1.5rem", color: "#0f172a" }}>Maintenance by Property</h3>
           <div style={{ width: "100%", height: 300 }}>
             <ResponsiveContainer>
-              <BarChart data={databaseData}>
+              <BarChart data={maintenanceData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                 <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} />
                 <YAxis stroke="#64748b" fontSize={12} tickLine={false} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="storageMB" name="Storage (MB)" fill="#10b981" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="queries" name="Queries" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="open" name="Open Requests" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="resolved" name="Resolved" fill="#6366f1" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

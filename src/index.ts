@@ -1,13 +1,9 @@
 import { serve } from "bun";
 import index from "./index.html";
-import app from "../api/index";
 
 const PORT = process.env.PORT || 3000;
-const API_PORT = 3001;
 
-// Start ElysiaJS Backend locally on port 3001
-app.listen(API_PORT);
-console.log(`🚀 ElysiaJS Backend running at http://localhost:${API_PORT}/api`);
+console.log(`🚀 .NET Backend should be running separately at http://localhost:5000`);
 
 // Start React Frontend locally on port 3000
 const server = serve({

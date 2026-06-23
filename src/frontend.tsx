@@ -4,6 +4,10 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import * as Sentry from "@sentry/react";
 import posthog from "posthog-js";
 import App from "./App";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
 import "./index.css";
 
 // Safe cross-runtime environment variable helper
@@ -13,9 +17,8 @@ const getEnv = (key: string): string | undefined => {
     if (process.env[key] !== undefined) return process.env[key];
   }
   
-  // 2. Try import.meta.env safely using a dynamic key lookup
   try {
-    const metaEnv = (import.meta as any)["env"];
+    const metaEnv = (import.meta as unknown as Record<string, Record<string, string>>)["env"];
     if (metaEnv && metaEnv[key] !== undefined) {
       return metaEnv[key];
     }
@@ -68,8 +71,10 @@ const PUBLISHABLE_KEY = getPublishableKey();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      <App />
-    </ClerkProvider>
+    <QueryClientProvider client={queryClient}>
+      <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+        <App />
+      </ClerkProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );

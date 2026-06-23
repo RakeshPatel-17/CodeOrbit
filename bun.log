@@ -1,0 +1,81 @@
+$ bun --hot src/index.ts
+🚀 .NET Backend should be running separately at http://localhost:5000
+💻 React Frontend running at http://localhost:3000/
+Bundled page in 1168ms: src/index.html
+Reloaded in 8ms: src/frontend.tsx
+[x2] Reloaded in 39ms: src/frontend.tsx
+[x3] Reloaded in 31ms: src/frontend.tsx
+[x4] Reloaded in 33ms: src/frontend.tsx
+[x5] Reloaded in 1ms: src/App.tsx
+92 |   const { data: residents = [], isLoading } = useQuery({
+             ^
+error: Expected " =" but found "{"
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:9
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                   ^
+error: Expected "}" but found ":"
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:15
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                     ^
+error: Expected "]" but found "residents"
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:17
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                                     ^
+error: The constant "isLoading" must be initialized
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:33
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                                                 ^
+error: Unexpected =
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:45
+92 |   const { data: residents = [], isLoading } = useQuery({
+             ^
+error: Expected " =" but found "{"
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:9
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                   ^
+error: Expected "}" but found ":"
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:15
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                     ^
+error: Expected "]" but found "residents"
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:17
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                                     ^
+error: The constant "isLoading" must be initialized
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:33
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                                                 ^
+error: Unexpected =
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:45
+92 |   const { data: residents = [], isLoading } = useQuery({
+             ^
+error: Expected " =" but found "{"
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:9
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                   ^
+error: Expected "}" but found ":"
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:15
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                     ^
+error: Expected "]" but found "residents"
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:17
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                                     ^
+error: The constant "isLoading" must be initialized
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:33
+
+92 |   const { data: residents = [], isLoading } = useQuery({
+                                                 ^
+error: Unexpected =
+    at D:\CodeOrbit\CodeOrbit\src\App.tsx:92:45
