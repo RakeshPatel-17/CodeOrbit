@@ -2,8 +2,5 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "bunVersion": "1.x",
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.ts" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
