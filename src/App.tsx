@@ -1,192 +1,69 @@
 import React from "react";
-import { AnalysisDashboard } from "./components/AnalysisDashboard";
-import { DataTable } from "./components/DataTable";
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton, useUser, useAuth } from "@clerk/clerk-react";
-import { useQuery } from "@tanstack/react-query";
-import { type ColumnDef } from "@tanstack/react-table";
-import { fetchResidents } from "./lib/api";
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { SignedIn, SignedOut, SignIn, UserButton } from "@clerk/clerk-react";
+import Dashboard from "./pages/Dashboard";
+import Donors from "./pages/Donors";
+import Donations from "./pages/Donations";
+import { ToastProvider } from "./components/ui/toast";
+import { Toaster } from "./components/ui/toaster";
 
-
-
-export default function App() {
+function ProtectedLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ fontFamily: "Inter, system-ui, sans-serif", background: "#f8fafc", minHeight: "100vh", color: "#0f172a" }}>
-      {/* Protected Enterprise Workspace */}
-      <SignedIn>
-        <DashboardLayout />
-      </SignedIn>
-
-      {/* Public Authentication Gate */}
-      <SignedOut>
-        <div className="auth-container">
-          <div className="auth-wrapper">
-            {/* Left Side: Product Showcase (Hidden on Mobile) */}
-            <div className="auth-left" style={{ color: "#ffffff" }}>
-              <span style={{ textTransform: "uppercase", fontSize: "0.75rem", fontWeight: 600, color: "#60a5fa", letterSpacing: "0.15em", marginBottom: "1rem", display: "block" }}>Property OS</span>
-              <h2 style={{ fontSize: "2.5rem", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.04em", marginBottom: "2rem" }}>
-                Next-Gen Multi-Tenant Property Management.
-              </h2>
-              
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                <FeatureItem title="Automated Occupancy" desc="Real-time access logs and automated attendance tracking." />
-                <FeatureItem title="Multi-Property Workspaces" desc="Manage multiple buildings safely using isolated row-level schemas." />
-                <FeatureItem title="Resident Engagement" desc="Centralized maintenance requests and unit allocations." />
-              </div>
-            </div>
-
-            {/* Right Side: Auth Glassmorphic Panel */}
-            <div className="auth-right">
-              <div style={{ background: "rgba(255, 255, 255, 0.03)", backdropFilter: "blur(12px)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "3rem 2.5rem", borderRadius: "16px", textAlign: "center", maxWidth: "420px", width: "100%", boxSizing: "border-box", boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.3)" }}>
-                <div style={{ marginBottom: "2rem" }}>
-                  <div style={{ display: "inline-flex", padding: "0.75rem", background: "linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%)", borderRadius: "12px", marginBottom: "1.25rem", boxShadow: "0 4px 12px rgba(79, 70, 229, 0.4)" }}>
-                    <span style={{ fontSize: "1.5rem", color: "#ffffff", fontWeight: "bold" }}>CO</span>
-                  </div>
-                  <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "#ffffff", letterSpacing: "-0.04em", marginBottom: "0.5rem" }}>Orbit Property</h1>
-                  <p style={{ color: "#94a3b8", fontSize: "0.875rem", lineHeight: "1.5" }}>Sign in to manage your real estate portfolio.</p>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <SignInButton mode="modal">
-                    <button style={{ background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)", color: "#ffffff", border: "none", padding: "0.875rem 1.5rem", borderRadius: "8px", fontWeight: 600, cursor: "pointer", width: "100%", boxShadow: "0 4px 6px -1px rgba(37, 99, 235, 0.2)", transition: "background 0.2s" }}>
-                      Sign In to Portfolio
-                    </button>
-                  </SignInButton>
-
-                  <SignUpButton mode="modal">
-                    <button style={{ background: "transparent", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.15)", padding: "0.875rem 1.5rem", borderRadius: "8px", fontWeight: 600, cursor: "pointer", width: "100%", transition: "background 0.2s" }}>
-                      Create Developer Account
-                    </button>
-                  </SignUpButton>
-                </div>
-
-                <div style={{ marginTop: "2.5rem", borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "1.5rem" }}>
-                  <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Powered by Bun, Neon Postgres, and Clerk</span>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex">
+      {/* Sidebar Navigation */}
+      <aside className="w-64 bg-white border-r border-slate-200 flex flex-col">
+        <div className="p-6 border-b border-slate-200">
+          <h1 className="text-xl font-bold text-blue-700 tracking-tight">TDMS</h1>
+          <p className="text-xs text-slate-500">BAPS Nadiad</p>
         </div>
-      </SignedOut>
-    </div>
-  );
-}
-
-function DashboardLayout() {
-  const { getToken } = useAuth();
-  const { user } = useUser();
-
-  type Resident = {
-    id: string;
-    name: string;
-    unit: string;
-    status: "Active" | "Inactive";
-    balance: number;
-  };
-
-  const columns: ColumnDef<Resident>[] = [
-    { accessorKey: "unit", header: "Unit" },
-    { accessorKey: "name", header: "Resident Name" },
-    { accessorKey: "status", header: "Status" },
-    {
-      accessorKey: "balance",
-      cell: ({ row }: any) => {
-        const amount = parseFloat(row.getValue("balance"))
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(amount)
-        return <div className="font-medium">{formatted}</div>
-      },
-    },
-  ];
-
-  const { data: residents = [], isLoading } = useQuery({
-    queryKey: ["residents"],
-    queryFn: async () => {
-      const token = await getToken();
-      return fetchResidents(token);
-    }
-  });
-
-
-  return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      {/* High-Density Sidebar */}
-      <aside style={{ width: "260px", background: "#0f172a", color: "#94a3b8", display: "flex", flexDirection: "column", borderRight: "1px solid #1e293b" }}>
-        <div style={{ padding: "1.25rem", borderBottom: "1px solid #1e293b", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ color: "#ffffff", fontWeight: 700, fontSize: "1.1rem" }}>Orbit Property</span>
-        </div>
-        <nav style={{ padding: "1rem", flex: 1, display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-          <div style={{ padding: "0.5rem 0.75rem", borderRadius: "6px", background: "#1e293b", color: "#ffffff", fontWeight: 500, cursor: "pointer", fontSize: "0.875rem" }}>Overview</div>
-          <div style={{ padding: "0.5rem 0.75rem", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem" }}>Properties & Units</div>
-          <div style={{ padding: "0.5rem 0.75rem", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem" }}>Residents</div>
-          <div style={{ padding: "0.5rem 0.75rem", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem" }}>Access & Occupancy</div>
-          <div style={{ padding: "0.5rem 0.75rem", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem" }}>Maintenance</div>
+        <nav className="flex-1 p-4 flex flex-col gap-2">
+          <Link to="/" className="px-4 py-2 rounded-md hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-medium transition-colors">Dashboard</Link>
+          <Link to="/donors" className="px-4 py-2 rounded-md hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-medium transition-colors">Donors</Link>
+          <Link to="/donations" className="px-4 py-2 rounded-md hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-medium transition-colors">Donations</Link>
         </nav>
-        <div style={{ padding: "1rem", borderTop: "1px solid #1e293b", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <div className="p-4 border-t border-slate-200 flex items-center gap-3">
           <UserButton afterSignOutUrl="/" />
-          <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <span style={{ color: "#ffffff", fontSize: "0.85rem", fontWeight: 500, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{user?.fullName || "Property Manager"}</span>
-            <span style={{ fontSize: "0.75rem", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{user?.primaryEmailAddress?.emailAddress}</span>
-          </div>
+          <span className="text-sm font-medium text-slate-600">My Account</span>
         </div>
       </aside>
 
-      {/* Master Workspace Content Arena */}
-      <main style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto" }}>
-        <header style={{ height: "60px", background: "#ffffff", borderBottom: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2rem" }}>
-          <h2 style={{ fontSize: "1.25rem", fontWeight: 600 }}>Portfolio Dashboard</h2>
-        </header>
-        <div style={{ padding: "2rem", maxWidth: "1200px", width: "100%", margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.5rem", marginBottom: "2rem" }}>
-            <Card title="Total Units" value="342" status="Across 4 properties" statusColor="#475569" />
-            <Card title="Current Occupancy" value="92.4%" status="Stable this month" statusColor="#16a34a" />
-            <Card title="Open Maintenance" value="14" status="3 urgent requests" statusColor="#ef4444" />
-            <Card title="Today's Gate Entries" value="1,284" status="Live access tracking" statusColor="#3b82f6" />
-          </div>
-          <div style={{ marginTop: "2rem" }}>
-            <h3 style={{ fontSize: "1.1rem", fontWeight: 600, marginBottom: "1rem" }}>Resident Directory</h3>
-            {isLoading ? (
-              <div>Loading residents...</div>
-            ) : (
-              <DataTable columns={columns} data={residents} />
-            )}
-          </div>
-
-          {/* Dynamic Data Analysis Dashboard */}
-          <div style={{ marginBottom: "2rem" }}>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1rem", letterSpacing: "-0.02em" }}>Occupancy & Activity Analysis</h3>
-            <AnalysisDashboard />
-          </div>
-          <div style={{ background: "#ffffff", padding: "1.5rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-            <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "1rem" }}>Active Residents Directory</h3>
-            {isLoading ? <div>Loading...</div> : <DataTable columns={columns} data={residents} />}
-          </div>
-        </div>
+      {/* Main Content Area */}
+      <main className="flex-1 overflow-auto">
+        {children}
       </main>
     </div>
   );
 }
 
-function Card({ title, value, status, statusColor }: { title: string, value: string, status: string, statusColor: string }) {
+export default function App() {
   return (
-    <div style={{ background: "#ffffff", padding: "1.25rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-      <span style={{ textTransform: "uppercase", fontSize: "0.75rem", fontWeight: 600, color: "#64748b", letterSpacing: "0.05em" }}>{title}</span>
-      <div style={{ fontSize: "1.5rem", fontWeight: 700, margin: "0.5rem 0 0.25rem 0", letterSpacing: "-0.03em" }}>{value}</div>
-      <div style={{ fontSize: "0.75rem", fontWeight: 500, color: statusColor }}>{status}</div>
-    </div>
+    <BrowserRouter>
+      <ToastProvider>
+        <Routes>
+          {/* Public / Auth */}
+          <Route path="/sign-in/*" element={<div className="min-h-screen flex items-center justify-center bg-slate-50"><SignIn routing="path" path="/sign-in" /></div>} />
+          
+          {/* Protected Routes */}
+          <Route path="/*" element={
+            <>
+              <SignedIn>
+                <ProtectedLayout>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/donors" element={<Donors />} />
+                    <Route path="/donations" element={<Donations />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </ProtectedLayout>
+              </SignedIn>
+              <SignedOut>
+                <Navigate to="/sign-in" replace />
+              </SignedOut>
+            </>
+          } />
+        </Routes>
+        <Toaster />
+      </ToastProvider>
+    </BrowserRouter>
   );
 }
-
-function FeatureItem({ title, desc }: { title: string; desc: string }) {
-  return (
-    <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
-      <div style={{ background: "rgba(96, 165, 250, 0.1)", color: "#60a5fa", padding: "0.25rem 0.5rem", borderRadius: "6px", fontWeight: "bold", fontSize: "0.875rem" }}>✓</div>
-      <div style={{ textAlign: "left" }}>
-        <h4 style={{ fontSize: "0.95rem", fontWeight: 600, color: "#ffffff", margin: "0 0 0.25rem 0" }}>{title}</h4>
-        <p style={{ fontSize: "0.85rem", color: "#94a3b8", margin: 0, lineHeight: 1.4 }}>{desc}</p>
-      </div>
-    </div>
-  );
-}
-
